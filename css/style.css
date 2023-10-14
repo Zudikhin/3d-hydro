@@ -188,6 +188,9 @@ input:focus {
   box-sizing: border-box;
   padding: 20px;
   border: 1px solid black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .hydro_block_left h1 {
@@ -206,8 +209,8 @@ input:focus {
   font-weight: 400;
 }
 
-model-viewer{
-  height: auto;
+model-viewer {
+  height: 200px;
   width: 100%;
 }
 
@@ -232,5 +235,8 @@ model-viewer{
   }
   .hydro_block_left h1 {
     font-size: 24px;
+  }
+  model-viewer {
+    height: 400px;
   }
 }
