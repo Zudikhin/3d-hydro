@@ -180,6 +180,7 @@ input:focus {
 
 .hydro_block_left {
   order: 2;
+  margin-top: 30px;
 }
 
 .hydro_block_right {
@@ -205,6 +206,11 @@ input:focus {
   font-weight: 400;
 }
 
+model-viewer{
+  height: auto;
+  width: 100%;
+}
+
 @media (min-width: 992px) {
   .hydro {
     padding: 100px 0px;
@@ -218,6 +224,7 @@ input:focus {
   .hydro_block_left {
     order: 1;
     width: calc(50% - 30px);
+    margin-top: 0px;
   }
   .hydro_block_right {
     order: 1;
