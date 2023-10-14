@@ -1,51 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>i-hydro</title>
-    <meta name="author" content="Yuriy Zudikhin" />
-    <link rel="stylesheet" href="css/slick.css">
-    <link rel="stylesheet" href="css/style.css" />
-    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.js"></script>
-    <script nomodule src="https://unpkg.com/@google/model-viewer/dist/model-viewer-legacy.js"></script>
-  </head>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THREE JS - Lesson</title>
+</head>
+<body>
 
-  <body>
+    <style>
+        * {margin:0;padding:0;}
 
-    <section class="hydro">
-      <div class="container">
-        <div class="hydro_block">
-          <div class="hydro_block_left">
-            <h1>Кибер-рука</h1>
-            <p>Кибернетическая рука - это инновационное решение, которое позволяет людям с ограничениями в подвижности или утратившими конечности полноценно участвовать в повседневной жизни. Эта технология сочетает в себе передовые разработки в области робототехники, механики и компьютерной науки. <br>
-              Наши кибернетические руки обладают уникальными возможностями, которые позволяют пользователю самостоятельно выполнять разнообразные задачи. Благодаря интегрированной системе датчиков и электромиозостимуляции, кибернетическая рука может точно воспроизводить движения и давать ощущение тактильного взаимодействия. <br>
-              Мы предлагаем не только готовые модели кибернетических рук, но и индивидуальные решения, адаптированные под потребности каждого пользователя. Наша команда экспертов тщательно прорабатывает каждый заказ, чтобы обеспечить максимальный комфорт и эффективность использования кибернетической руки.
-            </p>
-            <div class="hydro_block_left_play">
-              <span>Смотреть видео</span>
-            </div> 
-          </div>
-          <div class="hydro_block_right">
-            <model-viewer src="robo_2.glb" auto-rotate camera-controls alt="cube"></model-viewer>
-          </div>
-        </div>
-      </div>
-    </section>
+        body {overflow: hidden;}
 
-    <div class="hydro_video">
-      <div class="hydro_video_close">
-        <img src="close.png" alt="">
-      </div>
-      <div class="hydro_video_back"></div>
-      <video id="video" width="320" controls>
-        <source src="video.mp4" type="video/mp4">
-      </video>
-    </div>
+        .container {width: 100%; height: 100vh;}
+    </style>
 
-    <script src="js/jquery-3.6.0.min.js"></script>
-    <script src="js/main.js"></script>
+    <div class="container"></div>
 
-  </body>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.139.0/build/three.module.js",
+                "OrbitControls": "https://unpkg.com/three@0.139.0/examples/jsm/controls/OrbitControls.js",
+                "GLTFLoader": "https://unpkg.com/three@0.139.0/examples/jsm/loaders/GLTFLoader.js",
+                "RectAreaLightHelper": "https://unpkg.com/three@0.139.0/examples/jsm/helpers/RectAreaLightHelper.js",
+                "RectAreaLightUniformsLib": "https://unpkg.com/three@0.139.0/examples/jsm/lights/RectAreaLightUniformsLib.js"
+            }
+        }
+    </script>
+
+    <script type="module">
+
+        import * as THREE from 'three';
+        import { OrbitControls } from 'OrbitControls';
+        import { GLTFLoader } from 'GLTFLoader';
+        import { RectAreaLightHelper } from 'RectAreaLightHelper'
+        import { RectAreaLightUniformsLib } from 'RectAreaLightUniformsLib';
+
+        function init() {
+            let container = document.querySelector('.container');
+
+            //Scene
+            const scene = new THREE.Scene()
+            scene.background = new THREE.Color("#E2DFE1");
+
+            //Camera
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 3000);
+            camera.position.set(0, 0.5, 1)
+
+            //render
+            const renderer = new THREE.WebGLRenderer({antialias: true})
+            renderer.setSize(window.innerWidth, window.innerHeight)
+            container.appendChild(renderer.domElement)
+
+            let plain;
+            {
+                plain = new THREE.Mesh(
+                    new THREE.PlaneGeometry(1000, 1000),
+                    new THREE.MeshBasicMaterial({color: "#E2DFE1"})
+                )
+                plain.reciveShadow = true;
+                plain.position.set(0, -1, 0)
+                plain.rotateX(-Math.PI / 2);
+                scene.add(plain)
+            }
+
+            // Model
+            {
+                const loader = new GLTFLoader();
+                loader.load('./model/robo_2.glb', gltf => {
+                scene.add(gltf.scene);
+                }, 
+                    function (error) {
+                        console.log('Error: ' + error)
+                    }
+                )
+            }
+            
+            {
+                const light = new THREE.DirectionalLight(0xffffff, 1)
+                light.position.set(-2, 0, 10)
+                light.lookAt(0, -1, 0)
+                scene.add(light)
+
+                // Helper
+                // const helper = new THREE.DirectionalLightHelper(light, 5)
+                // scene.add(helper)
+            }
+
+            {
+                const light = new THREE.DirectionalLight(0xffffff, 1)
+                light.position.set(2, 0, 5)
+                light.lookAt(0, 1, 0)
+                scene.add(light)
+
+                // Helper
+                // const helper = new THREE.DirectionalLightHelper(light, 5)
+                // scene.add(helper)
+            }
+
+            RectAreaLightUniformsLib.init();
+            {
+                const rectLight = new THREE.RectAreaLight(0xffffff, 1, 100, 100);
+                rectLight.position.set(-10,0,0)
+                rectLight.rotation.y = Math.PI + Math.PI/4;
+                scene.add(rectLight)
+            }
+
+            {
+                const rectLight = new THREE.RectAreaLight(0xffffff, 1, 100, 100);
+                rectLight.position.set(10,0,0)
+                rectLight.rotation.y = Math.PI - Math.PI/4;
+                scene.add(rectLight)
+            }
+            
+            //OrbitControls
+            const controls = new OrbitControls(camera, renderer.domElement);
+            controls.autoRotate = true;
+            controls.autoRotateSpeed = 5;
+            controls.enableDamping = true;
+
+            //Resize
+            window.addEventListener('resize', onWindowResize, false)
+            
+            function onWindowResize() {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+
+                renderer.setSize(window.innerWidth, window.innerHeight)
+            }
+
+            // Animate
+            function animate() {
+                requestAnimationFrame(animate)
+                controls.update();
+                renderer.render(scene, camera)
+            }
+            animate()
+
+        }
+
+        init()
+    </script>
+</body>
 </html>
